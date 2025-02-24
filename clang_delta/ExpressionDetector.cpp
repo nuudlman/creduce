@@ -65,7 +65,7 @@ public:
                           CharSourceRange FilenameRange, OptionalFileEntryRef File,
                           StringRef SearchPath, StringRef RelativePath,
                           const Module *Imported,
-                          SrcMgr::CharacteristicKind FileType) override;
+                          SrcMgr::CharacteristicKind FileType);
 
 private:
   SourceManager &SrcManager;
