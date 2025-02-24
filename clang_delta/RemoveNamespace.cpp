@@ -944,7 +944,7 @@ void RemoveNamespace::handleOneNamedDecl(const NamedDecl *ND,
     TransAssert(IdInfo && "Invalid IdentifierInfo!");
     NewName += IdInfo->getName();
     // Make sure we have valid suffix for user literals
-    if (IsUserLiteral && IdInfo->getName().startswith("_")) {
+    if (IsUserLiteral && IdInfo->getName().starts_with("_")) {
       NewName = "_" + NewName;
     }
     NamedDeclToNewName[ND] = NewName;

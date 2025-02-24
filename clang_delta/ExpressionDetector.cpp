@@ -118,7 +118,7 @@ bool LocalTmpVarCollector::VisitDeclRefExpr(DeclRefExpr *DRE)
   const VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl());
   if (!VD)
     return true;
-  if (VD->getName().startswith(Prefix))
+  if (VD->getName().starts_with(Prefix))
     TmpVars.push_back(VD);
   return true;
 }
@@ -363,7 +363,7 @@ void ExpressionDetector::addOneTempVar(const VarDecl *VD)
 {
   if (!VD)
     return;
-  if (!VD->getName().startswith(TmpVarNamePrefix))
+  if (!VD->getName().starts_with(TmpVarNamePrefix))
     return;
   if (const Expr *E = VD->getInit())
     ProcessedExprs[VD] = E->IgnoreParenImpCasts();
@@ -374,9 +374,9 @@ bool ExpressionDetector::refToTmpVar(const NamedDecl *ND)
   StringRef Name = ND->getName();
   // We don't want to repeatly replace temporary variables
   // __creduce_expr_tmp_xxx, __creduce_printed_yy and __creduce_checked_zzz.
-  return Name.startswith(TmpVarNamePrefix) ||
-         Name.startswith(PrintedVarNamePrefix) ||
-         Name.startswith(CheckedVarNamePrefix);
+  return Name.starts_with(TmpVarNamePrefix) ||
+         Name.starts_with(PrintedVarNamePrefix) ||
+         Name.starts_with(CheckedVarNamePrefix);
 }
 
 // Reference: IdenticalExprChecker.cpp from Clang
@@ -524,8 +524,8 @@ bool ExpressionDetector::isValidExpr(Stmt *S, const Expr *E)
       if (const DeclRefExpr *SubE =
           dyn_cast<DeclRefExpr>(UO->getSubExpr()->IgnoreParenCasts())) {
         StringRef SubEName = SubE->getDecl()->getName();
-        if (SubEName.startswith(PrintedVarNamePrefix) ||
-            SubEName.startswith(CheckedVarNamePrefix))
+        if (SubEName.starts_with(PrintedVarNamePrefix) ||
+            SubEName.starts_with(CheckedVarNamePrefix))
           return false;
       }
     }
@@ -541,7 +541,7 @@ bool ExpressionDetector::isValidExpr(Stmt *S, const Expr *E)
       bool IsLit = SC == Stmt::IntegerLiteralClass ||
                    SC == Stmt::FloatingLiteralClass;
       if (IsLit && DRE &&
-          DRE->getDecl()->getName().startswith(TmpVarNamePrefix) &&
+          DRE->getDecl()->getName().starts_with(TmpVarNamePrefix) &&
           S->getStmtClass() == Stmt::IfStmtClass) {
         return false;
       }
